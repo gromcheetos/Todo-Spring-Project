@@ -6,6 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 @Entity
 @Data // Lombok annotation to generate getters and setters
 @AllArgsConstructor //Annotation to generate a constructor with all Arguments
@@ -18,9 +22,16 @@ public class TodoTask {
     private int id;
     private String title;
     private String description;
-
-    public TodoTask(String title, String description){
+    private Priority priority;
+    private LocalDate deadline;
+    private Status status;
+    public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status){
         this.title = title;
         this.description = description;
+        this.priority = priority;
+        this.deadline = deadline;
+        this.status = status;
     }
+
+
 }

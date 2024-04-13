@@ -1,6 +1,8 @@
 package com.example.todoapp.controller;
 
 
+import com.example.todoapp.model.Priority;
+import com.example.todoapp.model.Status;
 import com.example.todoapp.service.TodoTaskService;
 import com.example.todoapp.model.TodoTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,8 +22,11 @@ public class FirstController {
 
     @PostMapping("/create/task") //endpoint
     public ResponseEntity<TodoTask> createTask(@RequestParam("title") String title,
-                                               @RequestParam("description") String description) {
-        TodoTask todoTask = new TodoTask(title, description);
+                                               @RequestParam("description") String description,
+                                               @RequestParam("priority") String priority,
+                                               @RequestParam("deadline")LocalDate deadline,
+                                               @RequestParam("status") String status) {
+        TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), deadline, Status.valueOf(status));
         taskService.saveOrUpdateTask(todoTask);
         return ResponseEntity.ok(todoTask);
     }
@@ -38,4 +43,18 @@ public class FirstController {
         taskService.deleteTaskById(taskId);
         return ResponseEntity.ok().build();
     }
-}
+    @GetMapping("/tasks/filter/priority")
+    public ResponseEntity<List<TodoTask>> getTaskByPriority(@RequestParam("priority") Priority priority){
+        return ResponseEntity.ok(taskService.getTaskByPriority(priority));
+    }
+    @GetMapping("/tasks/filter/deadline")
+    public ResponseEntity<List<TodoTask>> getTaskByDeadline(@RequestParam("deadline") LocalDate deadline){
+        return ResponseEntity.ok(taskService.getTaskByDeadline(deadline));
+
+    }
+    @GetMapping("/tasks/filter/status")
+    public ResponseEntity<List<TodoTask>> getTaskByStatus(@RequestParam("status") String userStatus){
+        Status status = taskService.getStatusFromUserStatus(userStatus);
+        return ResponseEntity.ok(taskService.getTaskByStatus(status));
+        }
+    }
