@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EntityScan("com.example.todoapp.model")
 public class TodoAppApplication {
 
 	public static void main(String[] args) {
