@@ -16,4 +16,5 @@ public interface TaskRepository extends CrudRepository<TodoTask, Integer> {
     List<TodoTask> findByPriority(Priority priority);
     List<TodoTask> findByDeadline(LocalDate deadline);
     List<TodoTask> findByStatus(Status status);
+    List<TodoTask> findTodoTaskByUserId(int id);
 }

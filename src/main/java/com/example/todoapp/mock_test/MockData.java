@@ -77,6 +77,7 @@ public class MockData {
         Random random = new Random();
         LocalDate today = LocalDate.now();
         LocalDate deadline = today.plusDays(random.nextInt(10));
+
         int index = random.nextInt(titles.size());
         int priorityIndex = random.nextInt(priorities.size());
         Status [] statuses = Status.values();
