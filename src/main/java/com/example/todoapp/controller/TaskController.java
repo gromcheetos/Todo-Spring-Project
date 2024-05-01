@@ -11,16 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired
@@ -28,7 +26,7 @@ public class TaskController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create/task") //endpoint
+    @PostMapping("/create") //endpoint
     public ResponseEntity<TodoTask> createTask(@RequestParam("title") String title,
                                                @RequestParam("description") String description,
                                                @RequestParam("priority") String priority,
@@ -49,40 +47,40 @@ public class TaskController {
         return ResponseEntity.ok(todoTask);
     }
 
-    @GetMapping("/tasks/list") //endpoint
+    @GetMapping("/list") //endpoint
     public ResponseEntity<List<TodoTask>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    @GetMapping("/tasks")
+    @GetMapping("/")
     public ResponseEntity<TodoTask> getTaskById(@RequestParam("id") Integer taskId) {
         return ResponseEntity.ok(taskService.getTaskById(taskId));
     }
 
-    @PostMapping("/tasks/remove")
+    @PostMapping("/remove")
     public ResponseEntity<?> removeTask(@RequestParam("id") Integer taskId) {
         taskService.deleteTaskById(taskId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/tasks/filter/priority")
+    @GetMapping("/filter/priority")
     public ResponseEntity<List<TodoTask>> getTaskByPriority(@RequestParam("priority") Priority priority) {
         return ResponseEntity.ok(taskService.getTaskByPriority(priority));
     }
 
-    @GetMapping("/tasks/filter/deadline")
+    @GetMapping("/filter/deadline")
     public ResponseEntity<List<TodoTask>> getTaskByDeadline(@RequestParam("deadline") LocalDate deadline) {
         return ResponseEntity.ok(taskService.getTaskByDeadline(deadline));
 
     }
 
-    @GetMapping("/tasks/filter/status")
+    @GetMapping("/filter/status")
     public ResponseEntity<List<TodoTask>> getTaskByStatus(@RequestParam("status") String userStatus) {
         Status status = taskService.getStatusFromUserStatus(userStatus);
         return ResponseEntity.ok(taskService.getTaskByStatus(status));
     }
 
-    @GetMapping("/tasks/filter/user")
+    @GetMapping("/filter/user")
     public ResponseEntity<List<TodoTask>> getAllTasksByUserId(@RequestParam("userId") int userId) {
         return ResponseEntity.ok(userService.getTasksByUserId(userId));
     }
