@@ -19,26 +19,38 @@ public class UserService {
     private TaskRepository taskRepository;
 
 
-    public User createUser(String name, String email){
+    public User createUser(String name, String email) {
         return userRepository.save(new User(name, email));
     }
-    public User updateUser(Integer userId, User patch){
+
+    public User updateUser(Integer userId, User patch) {
         User toUpdateUser = userRepository.findById(userId).get();
         toUpdateUser.setName(patch.getName());
         toUpdateUser.setEmail(patch.getEmail());
         return userRepository.save(toUpdateUser);
     }
-    public User getUserById(Integer userId){
+
+    public User updateUserById(Integer userId, String name, String email) {
+        User toUpdateUser = userRepository.findById(userId).get();
+        toUpdateUser.setName(name);
+        toUpdateUser.setEmail(email);
+        return userRepository.save(toUpdateUser);
+    }
+
+    public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElse(null);
     }
-    public List<User> getAllUsers(){
-        return (List<User>)userRepository.findAll();
+
+    public List<User> getAllUsers() {
+        return (List<User>) userRepository.findAll();
     }
-    public void deleteUserById(Integer userId){
+
+    public void deleteUserById(Integer userId) {
         userRepository.deleteById(userId);
     }
-    public List<TodoTask> getTasksByUserId(Integer userId){
-        return (List<TodoTask>)taskRepository.findTodoTaskByUserId(userId);
+
+    public List<TodoTask> getTasksByUserId(Integer userId) {
+        return (List<TodoTask>) taskRepository.findTodoTaskByUserId(userId);
     }
 }
 

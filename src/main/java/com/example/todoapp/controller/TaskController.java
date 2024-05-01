@@ -1,8 +1,8 @@
 package com.example.todoapp.controller;
 
 
-import com.example.todoapp.model.Priority;
-import com.example.todoapp.model.Status;
+import com.example.todoapp.model.enums.Priority;
+import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.User;
 import com.example.todoapp.service.TodoTaskService;
 import com.example.todoapp.model.TodoTask;
@@ -47,6 +47,9 @@ public class TaskController {
         return ResponseEntity.ok(todoTask);
     }
 
+    //TODO: update task (title, priority, deadline) - request body
+    //TODO: update task (title, priority, deadline) - request params
+
     @GetMapping("/list") //endpoint
     public ResponseEntity<List<TodoTask>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
@@ -84,6 +87,5 @@ public class TaskController {
     public ResponseEntity<List<TodoTask>> getAllTasksByUserId(@RequestParam("userId") int userId) {
         return ResponseEntity.ok(userService.getTasksByUserId(userId));
     }
-
 
 }

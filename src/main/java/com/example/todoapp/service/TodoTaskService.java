@@ -1,7 +1,7 @@
 package com.example.todoapp.service;
 
-import com.example.todoapp.model.Priority;
-import com.example.todoapp.model.Status;
+import com.example.todoapp.model.enums.Priority;
+import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.TodoTask;
 import com.example.todoapp.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;

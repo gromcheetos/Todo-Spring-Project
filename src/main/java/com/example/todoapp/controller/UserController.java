@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+// TODO: please add a base path "users"
+// TODO: and adjust the remaining paths accordingly
 public class UserController {
     @Autowired
     private UserService userService;
@@ -22,10 +24,18 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/update/user")// ?? how
+    @PostMapping("/update/user/{userId}")// ?? how
     public ResponseEntity<User> updateUser(@PathVariable("userId") Integer userId,
                                            @RequestBody User patch){
         User updatedUser = userService.updateUser(userId, patch);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PostMapping("/update/user")
+    public ResponseEntity<User> updateUserAlternative(@RequestParam("userId") Integer userId,
+                                                      @RequestParam("name") String name,
+                                                      @RequestParam("email") String email){
+        User updatedUser = userService.updateUserById(userId, name, email);
         return ResponseEntity.ok(updatedUser);
     }
 

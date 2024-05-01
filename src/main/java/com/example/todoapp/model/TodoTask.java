@@ -1,12 +1,12 @@
 package com.example.todoapp.model;
 
+import com.example.todoapp.model.enums.Priority;
+import com.example.todoapp.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Entity
 @Data // Lombok annotation to generate getters and setters

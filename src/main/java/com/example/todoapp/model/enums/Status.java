@@ -1,4 +1,4 @@
-package com.example.todoapp.model;
+package com.example.todoapp.model.enums;
 
 public enum Status {
     IN_PROGRESS("In Progress"), DONE("Done"), TO_DO("To Do");
