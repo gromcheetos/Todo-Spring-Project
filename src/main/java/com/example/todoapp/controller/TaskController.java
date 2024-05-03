@@ -43,12 +43,28 @@ public class TaskController {
         TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), convertedDeadline, Status.valueOf(status));
         log.info("After creating TodoTask");
         todoTask.setUser(user);
-        taskService.saveOrUpdateTask(todoTask);
+        taskService.insertTask(todoTask);
         return ResponseEntity.ok(todoTask);
     }
 
-    //TODO: update task (title, priority, deadline) - request body
-    //TODO: update task (title, priority, deadline) - request params
+    @PostMapping("/update/{taskId}")
+    public ResponseEntity<TodoTask> updateTasks(@PathVariable("taskId") Integer taskId,
+                                                @RequestBody TodoTask task){
+        log.info("Received RequestBody: {}", task);
+        TodoTask todoTask = taskService.updateTask(taskId, task);
+        return ResponseEntity.ok(todoTask);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<TodoTask> updateTaskById(@RequestParam("taskId") Integer taskId,
+                                                   @RequestParam("title") String title,
+                                                   @RequestParam("priority") String priority,
+                                                   @RequestParam("deadline") String deadline){
+        log.info("Received request with title: {}, deadline: {}", title, deadline);
+        LocalDate convertedDeadline = LocalDate.parse(deadline);
+        TodoTask todoTask = taskService.updateTaskById(taskId,title, Priority.valueOf(priority), convertedDeadline);
+        return ResponseEntity.ok(todoTask);
+    }
 
     @GetMapping("/list") //endpoint
     public ResponseEntity<List<TodoTask>> getAllTasks() {

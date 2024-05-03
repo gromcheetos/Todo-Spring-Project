@@ -30,7 +30,7 @@ public class MockData {
         userService.createUser("Lara Kroft", "lara@gmail.com");
 
         for(int i = 0; i < 10; i++){
-            service.saveOrUpdateTask(createTask());
+            service.insertTask(createTask());
         }
     }
 
