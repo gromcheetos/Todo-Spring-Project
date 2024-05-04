@@ -16,6 +16,9 @@ public class TodoTaskService {
     @Autowired // creates and destroys objects for you, you don't need to instantiate them
     private TaskRepository taskRepository;
 
+    @Autowired
+    private UserService userService;
+
     public void insertTask(TodoTask task){
         taskRepository.save(task); //runs the insert into table todo_tasks values(...)
     }

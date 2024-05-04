@@ -27,7 +27,8 @@ public class TodoTask {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
-    public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status){
+
+    public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status) {
         this.title = title;
         this.description = description;
         this.priority = priority;
@@ -36,8 +37,11 @@ public class TodoTask {
     }
 
     @Override
-    public String toString(){
-        return "task_id: " + id + ", title: " + title + ", description: " + description +"user_id: " + user.getId() 
+    public String toString() {
+        if (user == null) {
+            return "task_id: " + id + ", title: " + title + ", description: " + description;
+        }
+        return "task_id: " + id + ", title: " + title + ", description: " + description + "user_id: " + user.getId()
                 + ", user_name: " + user.getName() + ", user_email: " + user.getEmail();
     }
 
