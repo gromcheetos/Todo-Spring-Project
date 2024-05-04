@@ -1,9 +1,11 @@
-package com.example.todoapp.mock_test;
+package com.example.todoapp.mocks;
 
-import com.example.todoapp.model.Priority;
-import com.example.todoapp.model.Status;
+import com.example.todoapp.model.User;
+import com.example.todoapp.model.enums.Priority;
+import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.TodoTask;
 import com.example.todoapp.service.TodoTaskService;
+import com.example.todoapp.service.UserService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,16 +14,23 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
-import static com.example.todoapp.model.Priority.*;
+import static com.example.todoapp.model.enums.Priority.*;
 
 @Component
 public class MockData {
+
     @Autowired
     private TodoTaskService service;
+
+    @Autowired
+    private UserService userService;
+
     @PostConstruct
     public void createMockData(){
+        userService.createUser("Lara Kroft", "lara@gmail.com");
+
         for(int i = 0; i < 10; i++){
-            service.saveOrUpdateTask(createTask());
+            service.insertTask(createTask());
         }
     }
 
@@ -77,6 +86,7 @@ public class MockData {
         Random random = new Random();
         LocalDate today = LocalDate.now();
         LocalDate deadline = today.plusDays(random.nextInt(10));
+
         int index = random.nextInt(titles.size());
         int priorityIndex = random.nextInt(priorities.size());
         Status [] statuses = Status.values();

@@ -1,20 +1,17 @@
 package com.example.todoapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.todoapp.model.enums.Priority;
+import com.example.todoapp.model.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Entity
 @Data // Lombok annotation to generate getters and setters
 @AllArgsConstructor //Annotation to generate a constructor with all Arguments
 @NoArgsConstructor //Annotation to generate a constructor with no arguments
-@ToString //Annotation to generate a toString method
 @EqualsAndHashCode //Annotation to generate equals and hashCode methods
 public class TodoTask {
     @Id
@@ -25,6 +22,11 @@ public class TodoTask {
     private Priority priority;
     private LocalDate deadline;
     private Status status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
     public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status){
         this.title = title;
         this.description = description;
@@ -33,5 +35,10 @@ public class TodoTask {
         this.status = status;
     }
 
+    @Override
+    public String toString(){
+        return "task_id: " + id + ", title: " + title + ", description: " + description +"user_id: " + user.getId() 
+                + ", user_name: " + user.getName() + ", user_email: " + user.getEmail();
+    }
 
 }
