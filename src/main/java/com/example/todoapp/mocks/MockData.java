@@ -25,11 +25,13 @@ public class MockData {
     @Autowired
     private UserService userService;
 
-    @PostConstruct
-    public void createMockData(){
-        userService.createUser("Lara Kroft", "lara@gmail.com");
+    private User testUser;
 
-        for(int i = 0; i < 10; i++){
+    @PostConstruct
+    public void createMockData() {
+        testUser = userService.createUser("Lara Kroft", "lara@gmail.com");
+
+        for (int i = 0; i < 10; i++) {
             service.insertTask(createTask());
         }
     }
@@ -89,10 +91,12 @@ public class MockData {
 
         int index = random.nextInt(titles.size());
         int priorityIndex = random.nextInt(priorities.size());
-        Status [] statuses = Status.values();
+        Status[] statuses = Status.values();
         int statusIndex = random.nextInt(statuses.length);
         Status randomStatus = statuses[statusIndex];
-        return new TodoTask(titles.get(index), descriptions.get(index), priorities.get(priorityIndex), deadline, randomStatus);
+        TodoTask task = new TodoTask(titles.get(index), descriptions.get(index), priorities.get(priorityIndex), deadline, randomStatus);
+        task.setUser(testUser);
+        return task;
     }
 
 
