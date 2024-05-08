@@ -82,7 +82,7 @@ public class MockData {
                 "Assign tasks to members of the team."
         );
         List<Priority> priorities = List.of(
-                High, Medium, Low
+                HIGH, MEDIUM, LOW
         );
 
         Random random = new Random();

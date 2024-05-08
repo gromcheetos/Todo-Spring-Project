@@ -19,8 +19,8 @@ public class TodoTaskService {
     @Autowired
     private UserService userService;
 
-    public void insertTask(TodoTask task){
-        taskRepository.save(task); //runs the insert into table todo_tasks values(...)
+    public TodoTask insertTask(TodoTask task){
+        return taskRepository.save(task); //runs the insert into table todo_tasks values(...)
     }
     public TodoTask updateTask(Integer taskId, TodoTask todoTask){
         TodoTask toUpdateTask = taskRepository.findById(taskId).orElseThrow(NoSuchElementException :: new);
