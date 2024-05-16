@@ -1,5 +1,7 @@
 package com.example.todoapp.service;
 
+import com.example.todoapp.exceptions.TaskNotFoundException;
+import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.TodoTask;
 import com.example.todoapp.model.User;
 import com.example.todoapp.repository.TaskRepository;
@@ -23,34 +25,41 @@ public class UserService {
         return userRepository.save(new User(name, email));
     }
 
-    public User updateUser(Integer userId, User patch) {
+   /* public User updateUser(Integer userId, User patch) {
         User toUpdateUser = userRepository.findById(userId).get();
         toUpdateUser.setName(patch.getName());
         toUpdateUser.setEmail(patch.getEmail());
         return userRepository.save(toUpdateUser);
-    }
+    }*/
 
-    public User updateUserById(Integer userId, String name, String email) {
-        User toUpdateUser = userRepository.findById(userId).get();
+    public User updateUserById(Integer userId, String name, String email) throws UserNotFoundException {
+        User toUpdateUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("No Found User"));
         toUpdateUser.setName(name);
         toUpdateUser.setEmail(email);
         return userRepository.save(toUpdateUser);
     }
 
-    public User getUserById(Integer userId) {
-        return userRepository.findById(userId).orElse(null);
+    public User getUserById(Integer userId) throws UserNotFoundException{
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("No Found User"));
     }
 
     public List<User> getAllUsers() {
         return (List<User>) userRepository.findAll();
     }
 
-    public void deleteUserById(Integer userId) {
+    public void deleteUserById(Integer userId) throws UserNotFoundException{
+        if(userRepository.findById(userId).isEmpty()){
+            throw new UserNotFoundException("No Found User");
+        }
         userRepository.deleteById(userId);
     }
 
-    public List<TodoTask> getTasksByUserId(Integer userId) {
-        return (List<TodoTask>) taskRepository.findTodoTaskByUserId(userId);
+    public List<TodoTask> getTasksByUserId(Integer userId) throws UserNotFoundException {
+        List<TodoTask> tasks = taskRepository.findTodoTaskByUserId(userId);
+        if(tasks.isEmpty()){
+            throw new UserNotFoundException("No Found User");
+        }
+        return tasks;
     }
 }
 

@@ -1,6 +1,8 @@
 package com.example.todoapp.controller;
 
 
+import com.example.todoapp.exceptions.TaskNotFoundException;
+import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.enums.Priority;
 import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.User;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +36,7 @@ public class TaskController {
         @RequestParam("priority") String priority,
         @RequestParam("deadline") String deadline,
         @RequestParam("status") String status,
-        @RequestParam("userId") int userId) {
+        @RequestParam("userId") int userId) throws UserNotFoundException {
         log.info("Received request with status: {} ", status);
         User user = userService.getUserById(userId);
         if (user == null) {
@@ -52,12 +55,15 @@ public class TaskController {
     public ResponseEntity<TodoTask> updateTasks(@PathVariable("taskId") Integer taskId,
         @RequestBody TodoTask task) {
         log.info("Received RequestBody: {}", task);
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        TodoTask todoTask = taskService.updateTask(taskId, task);
-        return ResponseEntity.ok(todoTask);
+        try{
+            TodoTask todoTask = taskService.updateTask(taskId, task);
+            return ResponseEntity.ok(todoTask);
+        }catch(TaskNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PostMapping("/update")
+    /*@PostMapping("/update")
     public ResponseEntity<TodoTask> updateTaskById(@RequestParam("taskId") Integer taskId,
         @RequestParam("title") String title,
         @RequestParam("priority") String priority,
@@ -66,7 +72,7 @@ public class TaskController {
         LocalDate convertedDeadline = LocalDate.parse(deadline);
         TodoTask todoTask = taskService.updateTaskById(taskId, title, Priority.valueOf(priority), convertedDeadline);
         return ResponseEntity.ok(todoTask);
-    }
+    }*/
 
     @GetMapping("/list") //endpoint
     public ResponseEntity<List<TodoTask>> getAllTasks() {
@@ -75,41 +81,58 @@ public class TaskController {
 
     @GetMapping("/")
     public ResponseEntity<TodoTask> getTaskById(@RequestParam("id") Integer taskId) {
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        return ResponseEntity.ok(taskService.getTaskById(taskId));
+        try{
+            return ResponseEntity.ok(taskService.getTaskById(taskId));
+        }catch(TaskNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/remove")
     public ResponseEntity<?> removeTask(@RequestParam("id") Integer taskId) {
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        taskService.deleteTaskById(taskId);
-        return ResponseEntity.ok().build();
+        try{
+            taskService.deleteTaskById(taskId);
+            return ResponseEntity.ok().build();
+        }catch(TaskNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/filter/priority")
     public ResponseEntity<List<TodoTask>> getTaskByPriority(@RequestParam("priority") Priority priority) {
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        return ResponseEntity.ok(taskService.getTaskByPriority(priority));
+        // receive pram as a string or priority type both work
+        try{
+            return ResponseEntity.ok(taskService.getTaskByPriority(priority));
+        }catch(TaskNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/filter/deadline")
     public ResponseEntity<List<TodoTask>> getTaskByDeadline(@RequestParam("deadline") LocalDate deadline) {
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        return ResponseEntity.ok(taskService.getTaskByDeadline(deadline));
-
+        try{
+            //LocalDate convertedDeadline = LocalDate.parse(deadline);
+            return ResponseEntity.ok(taskService.getTaskByDeadline(deadline));
+        }catch(TaskNotFoundException exception){
+            return ResponseEntity.notFound().build(); // differences with new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/filter/status")
-    public ResponseEntity<List<TodoTask>> getTaskByStatus(@RequestParam("status") String userStatus) {
-        // TODO add exception handling here - try catch block (TaskNotFoundException)
-        Status status = taskService.getStatusFromUserStatus(userStatus);
-        return ResponseEntity.ok(taskService.getTaskByStatus(status));
+    public ResponseEntity<List<TodoTask>> getTaskByStatus(@RequestParam("status") String status) {
+        try{
+            return ResponseEntity.ok(taskService.getTaskByStatus(Status.valueOf(status)));
+        }catch(TaskNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/filter/user")
     public ResponseEntity<List<TodoTask>> getAllTasksByUserId(@RequestParam("userId") int userId) {
-        // TODO add exception handling here - try catch block (UserNotFoundException)
-        return ResponseEntity.ok(userService.getTasksByUserId(userId));
+        try{
+            return ResponseEntity.ok(userService.getTasksByUserId(userId));
+        }catch(UserNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
-
 }

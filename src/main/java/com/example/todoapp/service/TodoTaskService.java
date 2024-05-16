@@ -1,5 +1,8 @@
 package com.example.todoapp.service;
 
+import com.example.todoapp.controller.TaskController;
+import com.example.todoapp.exceptions.TaskNotFoundException;
+import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.enums.Priority;
 import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.TodoTask;
@@ -22,45 +25,63 @@ public class TodoTaskService {
     public TodoTask insertTask(TodoTask task){
         return taskRepository.save(task); //runs the insert into table todo_tasks values(...)
     }
-    public TodoTask updateTask(Integer taskId, TodoTask todoTask){
-        TodoTask toUpdateTask = taskRepository.findById(taskId).orElseThrow(NoSuchElementException :: new);
+    public TodoTask updateTask(Integer taskId, TodoTask todoTask) throws TaskNotFoundException {
+        TodoTask toUpdateTask = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("No Found Task"));
         toUpdateTask.setTitle(todoTask.getTitle());
+        toUpdateTask.setDescription(todoTask.getDescription());
         toUpdateTask.setDeadline(todoTask.getDeadline());
         toUpdateTask.setPriority(todoTask.getPriority());
+        toUpdateTask.setStatus(todoTask.getStatus());
         return taskRepository.save(toUpdateTask);
     }
-    public TodoTask updateTaskById(Integer taskId, String title, Priority priority, LocalDate deadline){
+    /*public TodoTask updateTaskById(Integer taskId, String title, Priority priority, LocalDate deadline){
         TodoTask toUpdateTask = taskRepository.findById(taskId).orElseThrow(NoSuchElementException :: new);
         toUpdateTask.setTitle(title);
         toUpdateTask.setPriority(priority);
         toUpdateTask.setDeadline(deadline);
         return taskRepository.save(toUpdateTask);
-    }
+    }*/
 
-    public TodoTask getTaskById(Integer taskId){
-        return taskRepository.findById(taskId).orElse(null);
+    public TodoTask getTaskById(Integer taskId) throws TaskNotFoundException {
+        return taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("No Found Task"));
     }
     public List<TodoTask> getAllTasks(){
         return (List<TodoTask>)taskRepository.findAll();
     }
-    public void deleteTaskById(Integer taskId){
+    public void deleteTaskById(Integer taskId)  throws TaskNotFoundException {
+        if(taskRepository.findById(taskId).isEmpty()){
+            throw new TaskNotFoundException("No Found Task");
+        }
         taskRepository.deleteById(taskId);
     }
-    public List<TodoTask> getTaskByPriority(Priority priority){
-        return taskRepository.findByPriority(priority);
+    public List<TodoTask> getTaskByPriority(Priority priority) throws TaskNotFoundException{
+        List<TodoTask> tasks = taskRepository.findByPriority(priority);
+        if(tasks.isEmpty()){
+            throw new TaskNotFoundException("No Found Task");
+        }
+        return tasks;
     }
-    public List<TodoTask> getTaskByDeadline(LocalDate deadline){
-        return taskRepository.findByDeadline(deadline);
+    public List<TodoTask> getTaskByDeadline(LocalDate deadline) throws TaskNotFoundException{
+        List<TodoTask> tasks = taskRepository.findByDeadline(deadline);
+        if(tasks.isEmpty()){
+            throw new TaskNotFoundException("No Found Task");
+        }
+        return tasks;
     }
-    public List<TodoTask> getTaskByStatus(Status status){
-        return taskRepository.findByStatus(status);
+    public List<TodoTask> getTaskByStatus(Status status) throws TaskNotFoundException{
+        List<TodoTask> tasks = taskRepository.findByStatus(status);
+        if(tasks.isEmpty()){
+            throw new TaskNotFoundException("No Found Task");
+        }
+        return tasks;
     }
-    public Status getStatusFromUserStatus(String userStatus) {
+    /*
+    public Status getStatusFromUserStatus(String userStatus){
         for (Status status : Status.values()) {
             if (status.getUserStatus().equalsIgnoreCase(userStatus)) {
                 return status;
             }
         }
         return null;
-    }
+    }*/
 }

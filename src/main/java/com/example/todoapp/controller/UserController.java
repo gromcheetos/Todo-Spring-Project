@@ -1,10 +1,12 @@
 package com.example.todoapp.controller;
 
+import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.TodoTask;
 import com.example.todoapp.model.User;
 import com.example.todoapp.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,25 +27,33 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/update/{userId}")
+    /*@PostMapping("/update/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable("userId") Integer userId,
                                            @RequestBody User patch){
         User updatedUser = userService.updateUser(userId, patch);
         return ResponseEntity.ok(updatedUser);
-    }
+    }*/
 
     @PostMapping("/update")
     public ResponseEntity<User> updateUserAlternative(@RequestParam("userId") Integer userId,
                                                       @RequestParam("name") String name,
                                                       @RequestParam("email") String email){
-        User updatedUser = userService.updateUserById(userId, name, email);
-        return ResponseEntity.ok(updatedUser);
+        try{
+            User updatedUser = userService.updateUserById(userId, name, email);
+            return ResponseEntity.ok(updatedUser);
+        }catch(UserNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestParam("userId") Integer userId){
-        userService.deleteUserById(userId);
-        return ResponseEntity.ok().build();
+        try{
+            userService.deleteUserById(userId);
+            return ResponseEntity.ok().build();
+        }catch(UserNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping ("/list")
@@ -52,7 +62,10 @@ public class UserController {
     }
     @GetMapping("/search")
     public ResponseEntity<User> getUserById(@RequestParam("userId") Integer userId){
-        return ResponseEntity.ok(userService.getUserById(userId));
-
+        try{
+            return ResponseEntity.ok(userService.getUserById(userId));
+        }catch(UserNotFoundException exception){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
