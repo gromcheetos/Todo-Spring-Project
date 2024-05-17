@@ -23,21 +23,14 @@ public class UserController {
     public ResponseEntity<User> createUser(
                                            @RequestParam("userName") String userName,
                                            @RequestParam("userEmail") String userEmail){
-        User user = userService.createUser(userName, userEmail);
-        return ResponseEntity.ok(user);
+        User user = new User(userName, userEmail);
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
-    /*@PostMapping("/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable("userId") Integer userId,
-                                           @RequestBody User patch){
-        User updatedUser = userService.updateUser(userId, patch);
-        return ResponseEntity.ok(updatedUser);
-    }*/
-
     @PostMapping("/update")
-    public ResponseEntity<User> updateUserAlternative(@RequestParam("userId") Integer userId,
-                                                      @RequestParam("name") String name,
-                                                      @RequestParam("email") String email){
+    public ResponseEntity<User> updateUser(@RequestParam("userId") Integer userId,
+                                                      @RequestParam("userName") String name,
+                                                      @RequestParam("userEmail") String email){
         try{
             User updatedUser = userService.updateUserById(userId, name, email);
             return ResponseEntity.ok(updatedUser);
@@ -46,11 +39,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestParam("userId") Integer userId){
         try{
             userService.deleteUserById(userId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }catch(UserNotFoundException exception){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

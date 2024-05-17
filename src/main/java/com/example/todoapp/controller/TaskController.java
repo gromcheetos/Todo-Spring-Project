@@ -34,7 +34,7 @@ public class TaskController {
     public ResponseEntity<TodoTask> createTask(@RequestParam("title") String title,
         @RequestParam("description") String description,
         @RequestParam("priority") String priority,
-        @RequestParam("deadline") String deadline,
+        @RequestParam("deadline") LocalDate deadline,
         @RequestParam("status") String status,
         @RequestParam("userId") int userId) throws UserNotFoundException {
         log.info("Received request with status: {} ", status);
@@ -42,9 +42,9 @@ public class TaskController {
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        LocalDate convertedDeadline = LocalDate.parse(deadline);
+       // LocalDate convertedDeadline = LocalDate.parse(deadline);
         log.info("Before creating TodoTask");
-        TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), convertedDeadline,
+        TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), deadline,
             Status.valueOf(status));
         log.info("After creating TodoTask");
         todoTask.setUser(user);
@@ -63,17 +63,6 @@ public class TaskController {
         }
     }
 
-    /*@PostMapping("/update")
-    public ResponseEntity<TodoTask> updateTaskById(@RequestParam("taskId") Integer taskId,
-        @RequestParam("title") String title,
-        @RequestParam("priority") String priority,
-        @RequestParam("deadline") String deadline) {
-        log.info("Received request with title: {}, deadline: {}", title, deadline);
-        LocalDate convertedDeadline = LocalDate.parse(deadline);
-        TodoTask todoTask = taskService.updateTaskById(taskId, title, Priority.valueOf(priority), convertedDeadline);
-        return ResponseEntity.ok(todoTask);
-    }*/
-
     @GetMapping("/list") //endpoint
     public ResponseEntity<List<TodoTask>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
@@ -88,11 +77,11 @@ public class TaskController {
         }
     }
 
-    @PostMapping("/remove")
+    @DeleteMapping("/remove")
     public ResponseEntity<?> removeTask(@RequestParam("id") Integer taskId) {
         try{
             taskService.deleteTaskById(taskId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }catch(TaskNotFoundException exception){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -100,7 +89,6 @@ public class TaskController {
 
     @GetMapping("/filter/priority")
     public ResponseEntity<List<TodoTask>> getTaskByPriority(@RequestParam("priority") Priority priority) {
-        // receive pram as a string or priority type both work
         try{
             return ResponseEntity.ok(taskService.getTaskByPriority(priority));
         }catch(TaskNotFoundException exception){
@@ -111,10 +99,9 @@ public class TaskController {
     @GetMapping("/filter/deadline")
     public ResponseEntity<List<TodoTask>> getTaskByDeadline(@RequestParam("deadline") LocalDate deadline) {
         try{
-            //LocalDate convertedDeadline = LocalDate.parse(deadline);
             return ResponseEntity.ok(taskService.getTaskByDeadline(deadline));
         }catch(TaskNotFoundException exception){
-            return ResponseEntity.notFound().build(); // differences with new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 

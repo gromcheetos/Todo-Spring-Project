@@ -21,16 +21,9 @@ public class UserService {
     private TaskRepository taskRepository;
 
 
-    public User createUser(String name, String email) {
-        return userRepository.save(new User(name, email));
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
-
-   /* public User updateUser(Integer userId, User patch) {
-        User toUpdateUser = userRepository.findById(userId).get();
-        toUpdateUser.setName(patch.getName());
-        toUpdateUser.setEmail(patch.getEmail());
-        return userRepository.save(toUpdateUser);
-    }*/
 
     public User updateUserById(Integer userId, String name, String email) throws UserNotFoundException {
         User toUpdateUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("No Found User"));
