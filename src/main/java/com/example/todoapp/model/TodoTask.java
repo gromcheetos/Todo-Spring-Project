@@ -25,6 +25,7 @@ public class TodoTask {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status) {

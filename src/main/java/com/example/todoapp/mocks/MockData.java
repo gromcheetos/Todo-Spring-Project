@@ -29,7 +29,8 @@ public class MockData {
 
     @PostConstruct
     public void createMockData() {
-        testUser = userService.createUser("Lara Kroft", "lara@gmail.com");
+        User mockUser = new User("Lara Kroft", "lara@gmail.com");
+        testUser = userService.createUser(mockUser);
 
         for (int i = 0; i < 10; i++) {
             service.insertTask(createTask());
@@ -82,7 +83,7 @@ public class MockData {
                 "Assign tasks to members of the team."
         );
         List<Priority> priorities = List.of(
-                High, Medium, Low
+                HIGH, MEDIUM, LOW
         );
 
         Random random = new Random();
