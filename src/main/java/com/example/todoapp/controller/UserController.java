@@ -16,48 +16,51 @@ import java.util.List;
 @RestController
 @Slf4j
 public class UserController {
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(
-                                           @RequestParam("userName") String userName,
-                                           @RequestParam("userEmail") String userEmail){
+        @RequestParam("userName") String userName,
+        @RequestParam("userEmail") String userEmail) {
         User user = new User(userName, userEmail);
         return ResponseEntity.ok(userService.createUser(user));
     }
 
     @PostMapping("/update")
     public ResponseEntity<User> updateUser(@RequestParam("userId") Integer userId,
-                                                      @RequestParam("userName") String name,
-                                                      @RequestParam("userEmail") String email){
-        try{
+        @RequestParam("userName") String name,
+        @RequestParam("userEmail") String email) {
+        try {
             User updatedUser = userService.updateUserById(userId, name, email);
             return ResponseEntity.ok(updatedUser);
-        }catch(UserNotFoundException exception){
+        } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser(@RequestParam("userId") Integer userId){
-        try{
+    public ResponseEntity<?> deleteUser(@RequestParam("userId") Integer userId) {
+        try {
+            User userToBeDeleted = userService.getUserById(userId);
             userService.deleteUserById(userId);
-            return ResponseEntity.noContent().build();
-        }catch(UserNotFoundException exception){
+            return ResponseEntity.ok("Deleted user:" + userToBeDeleted);
+        } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping ("/list")
-    public ResponseEntity<List<User>> getAllUsers(){
-            return ResponseEntity.ok(userService.getAllUsers());
+    @GetMapping("/list")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
+
     @GetMapping("/search")
-    public ResponseEntity<User> getUserById(@RequestParam("userId") Integer userId){
-        try{
+    public ResponseEntity<User> getUserById(@RequestParam("userId") Integer userId) {
+        try {
             return ResponseEntity.ok(userService.getUserById(userId));
-        }catch(UserNotFoundException exception){
+        } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

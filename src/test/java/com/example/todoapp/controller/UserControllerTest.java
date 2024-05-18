@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class UserControllerTest {
+
     @MockBean
     private UserService userService;
     @Autowired
@@ -36,57 +37,63 @@ public class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(userList);
         mockMvc.perform(get("/users/list")).andExpect(status().isOk());
     }
+
     @Test
     public void createUserTest() throws Exception {
         User user = new User("Mary", "mary@hotmail.com");
         user.setId(1);
         when(userService.createUser(user)).thenReturn(user);
         mockMvc.perform(post("/users/create")
-                .param("userName", "Mary")
-                .param("userEmail", "mary@hotmail.com")
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userName", "Mary")
+            .param("userEmail", "mary@hotmail.com")
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
     public void updateUserTest() throws Exception {
         User user = new User("Mary", "mary@hotmail.com");
         user.setId(1);
-        when(userService.updateUserById(user.getId(), user.getName(),user.getEmail())).thenReturn(user);
+        when(userService.updateUserById(user.getId(), user.getName(), user.getEmail())).thenReturn(user);
         mockMvc.perform(post("/users/update")
-                .param("userId", String.valueOf(user.getId()))
-                .param("userName", "Mary")
-                .param("userEmail", "mary@changedEmail.net")
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(user.getId()))
+            .param("userName", "Mary")
+            .param("userEmail", "mary@changedEmail.net")
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
 
     }
+
     @Test
     public void updateUserTest_shouldNotUpdateDueToNullUser() throws Exception {
         int noExistentUserId = 5000;
-        when(userService.updateUserById(noExistentUserId, "Mary","mary@changedEmail.net")).thenThrow(UserNotFoundException.class);
+        when(userService.updateUserById(noExistentUserId, "Mary", "mary@changedEmail.net")).thenThrow(
+            UserNotFoundException.class);
         mockMvc.perform(post("/users/update")
-                .param("userId", String.valueOf(noExistentUserId))
-                .param("userName", "Mary")
-                .param("userEmail", "mary@changedEmail.net")
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(noExistentUserId))
+            .param("userName", "Mary")
+            .param("userEmail", "mary@changedEmail.net")
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void deleteUserTest() throws Exception {
         User user = new User();
         user.setId(1);
-        doNothing().when(userService).deleteUserById(user.getId());
+        when(userService.getUserById(1)).thenReturn(user);
         mockMvc.perform(delete("/users/delete")
-                .param("userId", String.valueOf(user.getId()))
-        ).andExpect(status().isNoContent());
+            .param("userId", String.valueOf(user.getId()))
+        ).andExpect(status().isOk());
     }
+
     @Test
     public void deleteUserTest_shouldNotReturnDueToNullUser() throws Exception {
         int notExistentUserId = 5000;
         doThrow(new UserNotFoundException("No Valid User")).when(userService).deleteUserById(notExistentUserId);
         mockMvc.perform(delete("/users/delete")
-                .param("userId", String.valueOf(notExistentUserId))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(notExistentUserId))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
 
@@ -96,17 +103,18 @@ public class UserControllerTest {
         user.setId(1);
         when(userService.getUserById(user.getId())).thenReturn(user);
         mockMvc.perform(get("/users/search")
-                .param("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isOk());
+            .param("userId", String.valueOf(user.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
+
     @Test
     public void getUserByIdTest_shouldNotReturnDueToNullUser() throws Exception {
         int notExistentUserId = 5000;
         when(userService.getUserById(notExistentUserId)).thenThrow(new UserNotFoundException("No Valid User"));
         mockMvc.perform(get("/users/search")
-                .param("userId", String.valueOf(notExistentUserId))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(notExistentUserId))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
 }

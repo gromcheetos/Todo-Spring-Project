@@ -48,6 +48,7 @@ public class TaskControllerTest {
         when(taskService.getAllTasks()).thenReturn(taskList);
         mockMvc.perform(get("/tasks/list")).andExpect(status().isOk());
     }
+
     @Test
     public void createTask_shouldCreateTask() throws Exception {
         User user = new User();
@@ -70,12 +71,13 @@ public class TaskControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
-    public void createTask_shouldNotCreateTaskDueToNullUser() throws Exception{
+    public void createTask_shouldNotCreateTaskDueToNullUser() throws Exception {
         User user = new User();
         user.setId(5000);
         TodoTask todoTask = new TodoTask("Some task", "Some description", Priority.MEDIUM, LocalDate.now(),
-                Status.IN_PROGRESS);
+            Status.IN_PROGRESS);
         todoTask.setId(1);
         todoTask.setUser(user);
 
@@ -83,139 +85,150 @@ public class TaskControllerTest {
         when(userService.getUserById(5000)).thenReturn(null);
         when(taskService.insertTask(todoTask)).thenReturn(todoTask);
         mockMvc.perform(post("/tasks/create")
-                .param("title", "Some task")
-                .param("description", "Some description")
-                .param("priority", Priority.MEDIUM.toString())
-                .param("deadline", LocalDate.now().toString())
-                .param("status", Status.IN_PROGRESS.toString())
-                .param("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("title", "Some task")
+            .param("description", "Some description")
+            .param("priority", Priority.MEDIUM.toString())
+            .param("deadline", LocalDate.now().toString())
+            .param("status", Status.IN_PROGRESS.toString())
+            .param("userId", String.valueOf(user.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
     }
+
     @Test
-    public void updateTask_shouldUpdateTask() throws Exception{
+    public void updateTask_shouldUpdateTask() throws Exception {
         TodoTask todoTask = new TodoTask("update task", "update description", Priority.MEDIUM, LocalDate.now(),
-                Status.DONE);
+            Status.DONE);
         todoTask.setId(1);
         when(taskService.updateTask(todoTask.getId(), todoTask)).thenReturn(todoTask);
         mockMvc.perform(post("/tasks/update/{taskId}", todoTask.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(todoTask)))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
+
     @Test
-    public void updateTask_shouldNotUpdateTaskDueToTaskNotFound() throws Exception{
+    public void updateTask_shouldNotUpdateTaskDueToTaskNotFound() throws Exception {
         TodoTask todoTask = new TodoTask("Update task", "Update description", Priority.MEDIUM, LocalDate.now(),
-                Status.DONE);
+            Status.DONE);
         todoTask.setId(5000);
         when(userService.getUserById(5000)).thenReturn(null);
         when(taskService.updateTask(todoTask.getId(), todoTask)).thenReturn(null);
         mockMvc.perform(post("/tasks/update/{taskId}", todoTask.getId())
-                .param("title", "Update task")
-                .param("description", "Update description")
-                .param("priority", Priority.MEDIUM.toString())
-                .param("deadline", LocalDate.now().toString())
-                .param("status", Status.DONE.toString())
-                .param("taskId", String.valueOf(todoTask.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("title", "Update task")
+            .param("description", "Update description")
+            .param("priority", Priority.MEDIUM.toString())
+            .param("deadline", LocalDate.now().toString())
+            .param("status", Status.DONE.toString())
+            .param("taskId", String.valueOf(todoTask.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isBadRequest());
     }
+
     @Test
     public void getTaskById_shouldReturnTaskById() throws Exception {
         TodoTask todoTask = new TodoTask();
         todoTask.setId(1);
         when(taskService.getTaskById(todoTask.getId())).thenReturn(todoTask);
         mockMvc.perform(get("/tasks/")
-                .param("id", String.valueOf(todoTask.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isOk());
+            .param("id", String.valueOf(todoTask.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
+
     @Test
     public void getTaskById_shouldNotReturnTaskDueToNotFoundTaskId() throws Exception {
         int notExistentTaskId = 5000;
         when(taskService.getTaskById(notExistentTaskId)).thenThrow(TaskNotFoundException.class);
         mockMvc.perform(get("/tasks") // "/tasks" & "/tasks/"
-                .param("id", String.valueOf(notExistentTaskId))
+            .param("id", String.valueOf(notExistentTaskId))
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void removeTask_shouldRemoveTaskById() throws Exception {
         TodoTask todoTask = new TodoTask();
         todoTask.setId(1);
         doNothing().when(taskService).deleteTaskById(todoTask.getId());
         mockMvc.perform(delete("/tasks/remove")
-                .param("id", String.valueOf(todoTask.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("id", String.valueOf(todoTask.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent());
     }
+
     @Test
     public void removeTask_shouldNotReturnDueToNotFoundTaskId() throws Exception {
         int notExistentTaskId = 5000;
         doThrow(new TaskNotFoundException("Not Found Task")).when(taskService).deleteTaskById(notExistentTaskId);
         mockMvc.perform(delete("/tasks/remove")
-                .param("id", String.valueOf(notExistentTaskId))
+            .param("id", String.valueOf(notExistentTaskId))
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void getTaskByPriority_shouldReturnListOfTaskByPriority() throws Exception {
         List<TodoTask> taskList = List.of(new TodoTask());
         Priority priorityTest = Priority.MEDIUM;
         when(taskService.getTaskByPriority(priorityTest)).thenReturn(taskList);
         mockMvc.perform(get("/tasks/filter/priority")
-                .param("priority", priorityTest.toString())
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("priority", priorityTest.toString())
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
     public void getTaskByPriority_shouldNotReturnListOfTaskDueToNotFoundPriority() throws Exception {
-        List<TodoTask> taskList = List.of(new TodoTask());
         Priority priorityTest = Priority.MEDIUM;
-        when(taskService.getTaskByPriority(priorityTest)).thenThrow(new TaskNotFoundException("No Tasks of " + priorityTest));
+        when(taskService.getTaskByPriority(priorityTest)).thenThrow(
+            new TaskNotFoundException("No Tasks of " + priorityTest));
         mockMvc.perform(get("/tasks/filter/priority")
-                .param("priority", priorityTest.toString())
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("priority", priorityTest.toString())
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void getTaskByDeadline_shouldReturnListOfTaskByDeadline() throws Exception {
         List<TodoTask> taskList = List.of(new TodoTask());
         LocalDate deadline = LocalDate.now();
         when(taskService.getTaskByDeadline(deadline)).thenReturn(taskList);
         mockMvc.perform(get("/tasks/filter/deadline")
-                .param("deadline", String.valueOf(deadline))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("deadline", String.valueOf(deadline))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
     public void getTaskByDeadline_shouldNotReturnListOfTaskDueToNotFoundDeadline() throws Exception {
-        List<TodoTask> taskList = List.of(new TodoTask());
         LocalDate deadline = LocalDate.now();
         when(taskService.getTaskByDeadline(deadline)).thenThrow(new TaskNotFoundException("No Tasks of " + deadline));
         mockMvc.perform(get("/tasks/filter/deadline")
-                .param("deadline", String.valueOf(deadline))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("deadline", String.valueOf(deadline))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void getTaskByStatus_shouldReturnListOfTaskByStatus() throws Exception {
         List<TodoTask> taskList = List.of(new TodoTask());
         Status status = Status.TO_DO;
         when(taskService.getTaskByStatus(status)).thenReturn(taskList);
         mockMvc.perform(get("/tasks/filter/status")
-                .param("status", String.valueOf(status))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("status", String.valueOf(status))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
     public void getTaskByStatus_shouldNotReturnListOfTaskDueToNotFoundStatus() throws Exception {
-        List<TodoTask> taskList = List.of(new TodoTask());
         Status status = Status.TO_DO;
         when(taskService.getTaskByStatus(status)).thenThrow(new TaskNotFoundException("Not Found tasks of" + status));
         mockMvc.perform(get("/tasks/filter/status")
-                .param("status", String.valueOf(status))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("status", String.valueOf(status))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
+
     @Test
     public void getAllTasksByUserId_shouldReturnListOfTaskByUser() throws Exception {
         List<TodoTask> taskList = List.of(new TodoTask());
@@ -223,18 +236,18 @@ public class TaskControllerTest {
         user.setId(1);
         when(userService.getTasksByUserId(user.getId())).thenReturn(taskList);
         mockMvc.perform(get("/tasks/filter/user")
-                .param("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(user.getId()))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
+
     @Test
     public void getAllTasksByUserId_shouldNotReturnListOfTaskDueToNotFoundUser() throws Exception {
-        List<TodoTask> taskList = List.of(new TodoTask());
         int notExistentUserId = 5000;
         when(userService.getTasksByUserId(notExistentUserId)).thenThrow(new UserNotFoundException("No Found User"));
         mockMvc.perform(get("/tasks/filter/user")
-                .param("userId", String.valueOf(notExistentUserId))
-                .contentType(MediaType.APPLICATION_JSON)
+            .param("userId", String.valueOf(notExistentUserId))
+            .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }
 
