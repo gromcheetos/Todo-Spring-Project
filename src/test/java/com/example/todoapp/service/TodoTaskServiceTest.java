@@ -64,6 +64,7 @@ public class TodoTaskServiceTest {
         task.setTitle("Go To Council");
 
         TodoTask updatedTask = new TodoTask();
+        updatedTask.setId(1);
         updatedTask.setTitle("Go To City hall");
 
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
@@ -73,7 +74,7 @@ public class TodoTaskServiceTest {
 
         Assertions.assertNotNull(actualResult);
         Assertions.assertNotEquals(task.getTitle(), actualResult.getTitle());
-        //Assertions.assertEquals(taskId, actualResult.getId());
+        Assertions.assertEquals(taskId, actualResult.getId());
         verify(taskRepository, times(1)).findById(taskId);
         verify(taskRepository, times(1)).save(task);
     }
