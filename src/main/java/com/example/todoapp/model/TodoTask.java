@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class TodoTask {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
     private String title;
     private String description;
     private Priority priority;
@@ -29,6 +29,14 @@ public class TodoTask {
     private User user;
 
     public TodoTask(String title, String description, Priority priority, LocalDate deadline, Status status) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.deadline = deadline;
+        this.status = status;
+    }
+    public TodoTask(Integer id, String title, String description, Priority priority, LocalDate deadline, Status status) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.priority = priority;

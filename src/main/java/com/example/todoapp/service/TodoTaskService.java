@@ -34,14 +34,6 @@ public class TodoTaskService {
         toUpdateTask.setStatus(todoTask.getStatus());
         return taskRepository.save(toUpdateTask);
     }
-    /*public TodoTask updateTaskById(Integer taskId, String title, Priority priority, LocalDate deadline){
-        TodoTask toUpdateTask = taskRepository.findById(taskId).orElseThrow(NoSuchElementException :: new);
-        toUpdateTask.setTitle(title);
-        toUpdateTask.setPriority(priority);
-        toUpdateTask.setDeadline(deadline);
-        return taskRepository.save(toUpdateTask);
-    }*/
-
     public TodoTask getTaskById(Integer taskId) throws TaskNotFoundException {
         return taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("No Found Task"));
     }
