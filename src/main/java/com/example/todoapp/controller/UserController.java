@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,20 +25,42 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<User> createUser(
-        @RequestParam("userName") String userName,
-        @RequestParam("userEmail") String userEmail) {
-        User user = new User(userName, userEmail);
-        return ResponseEntity.ok(userService.createUser(user));
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(
+        @RequestParam("name") String name,
+        @RequestParam("userEmail") String userEmail,
+        @RequestParam("username") String username,
+        @RequestParam("password") String password) {
+        log.info("Request received to register the user");
+        User newUser = new User(name, userEmail, username);
+        return ResponseEntity.ok(userService.createUser(newUser, password));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> basicLogin(@RequestParam("username") String username,
+                                             @RequestParam("password") String password) {
+        log.info("Request received for /users/login");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+        );
+        log.info("Authentication " + authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        log.info("User details: " + userDetails);
+        return ResponseEntity.ok("User " + userDetails.getUsername() + " logged in successfully");
     }
 
     @PostMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestParam("userId") Integer userId,
-        @RequestParam("userName") String name,
-        @RequestParam("userEmail") String email) {
+    public ResponseEntity<User> updateUser(
+        @RequestParam("userId") Integer userId,
+        @RequestParam("name") String name,
+        @RequestParam("userEmail") String email,
+        @RequestParam("username") String username,
+        @RequestParam("password") String password) {
         try {
-            User updatedUser = userService.updateUserById(userId, name, email);
+            User updatedUser = userService.updateUserById(userId, name, email, username, password);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException exception) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
