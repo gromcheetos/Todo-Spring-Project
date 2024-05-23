@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:each="task : ${listOfTasks} ">
+  <div class="todo-task" th:text="${task.title}"></div>
+</div>
+</body>
+</html>
