@@ -7,6 +7,7 @@ import com.example.todoapp.model.User;
 import com.example.todoapp.repository.TaskRepository;
 import com.example.todoapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +20,20 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
-
-    public User createUser(User user) {
+    public User createUser(User user, String password) {
+        user.setPassword(encoder.encode(password));
         return userRepository.save(user);
     }
 
-    public User updateUserById(Integer userId, String name, String email) throws UserNotFoundException {
+    public User updateUserById(Integer userId, String name, String email, String username, String password) throws UserNotFoundException {
         User toUpdateUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("No Found User"));
         toUpdateUser.setName(name);
         toUpdateUser.setEmail(email);
+        toUpdateUser.setUsername(username);
+        toUpdateUser.setPassword(password);
         return userRepository.save(toUpdateUser);
     }
 
@@ -54,5 +59,10 @@ public class UserService {
         }
         return tasks;
     }
+
+    public User getUserByUsername(String username){
+        return userRepository.findUserByUsername(username);
+    }
+
 }
 

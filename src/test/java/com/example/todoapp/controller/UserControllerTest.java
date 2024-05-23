@@ -40,25 +40,29 @@ public class UserControllerTest {
 
     @Test
     public void createUserTest() throws Exception {
-        User user = new User("Mary", "mary@hotmail.com");
+        User user = new User("Mary", "mary@hotmail.com", "coffeeLover", "1234");
         user.setId(1);
-        when(userService.createUser(user)).thenReturn(user);
-        mockMvc.perform(post("/users/create")
-            .param("userName", "Mary")
+        when(userService.createUser(user, user.getPassword())).thenReturn(user);
+        mockMvc.perform(post("/users/register")
+            .param("name", "Mary")
             .param("userEmail", "mary@hotmail.com")
+            .param("username", "coffeeLover")
+            .param("password", "1234")
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
 
     @Test
     public void updateUserTest() throws Exception {
-        User user = new User("Mary", "mary@hotmail.com");
+        User user = new User("Mary", "mary@hotmail.com", "coffeeLover", "1234");
         user.setId(1);
-        when(userService.updateUserById(user.getId(), user.getName(), user.getEmail())).thenReturn(user);
+        when(userService.updateUserById(user.getId(), user.getName(), user.getEmail(),user.getUsername(), user.getPassword())).thenReturn(user);
         mockMvc.perform(post("/users/update")
             .param("userId", String.valueOf(user.getId()))
-            .param("userName", "Mary")
+            .param("name", "Mary")
             .param("userEmail", "mary@changedEmail.net")
+            .param("username", "teaLover")
+            .param("password", "1234")
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
 
@@ -67,12 +71,14 @@ public class UserControllerTest {
     @Test
     public void updateUserTest_shouldNotUpdateDueToNullUser() throws Exception {
         int noExistentUserId = 5000;
-        when(userService.updateUserById(noExistentUserId, "Mary", "mary@changedEmail.net")).thenThrow(
+        when(userService.updateUserById(noExistentUserId, "Mary", "mary@changedEmail.net", "coffeeLover", "1234")).thenThrow(
             UserNotFoundException.class);
         mockMvc.perform(post("/users/update")
             .param("userId", String.valueOf(noExistentUserId))
-            .param("userName", "Mary")
+            .param("name", "Mary")
             .param("userEmail", "mary@changedEmail.net")
+            .param("username", "teaLover")
+            .param("password", "1234")
             .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
     }

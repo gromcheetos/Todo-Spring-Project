@@ -1,11 +1,8 @@
 package com.example.todoapp.service;
 
-import com.example.todoapp.exceptions.TaskNotFoundException;
 import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.TodoTask;
 import com.example.todoapp.model.User;
-import com.example.todoapp.model.enums.Priority;
-import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.repository.TaskRepository;
 import com.example.todoapp.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +12,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +24,14 @@ import static org.mockito.Mockito.times;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-    @MockBean
+    @Mock
     private TaskRepository taskRepository;
     @InjectMocks
     private UserService userService;
 
     @Test
     public void getAllUsersTest(){
-        List<User> expectedList = Arrays.asList(new User(1,"James", "james@bond.net"));
+        List<User> expectedList = Arrays.asList(new User("James","james@bond.net", "any"));
         when(userRepository.findAll()).thenReturn(expectedList);
         List<User> actualList = userService.getAllUsers();
 
@@ -49,8 +45,9 @@ public class UserServiceTest {
     @Test
     public void createUserTest(){
         User user = new User();
+        String password = "1234";
         when(userRepository.save(user)).thenReturn(user);
-        User actualUser = userService.createUser(user);
+        User actualUser = userService.createUser(user, password);
         Assertions.assertNotNull(actualUser);
         verify(userRepository).save(user);
     }
@@ -62,7 +59,7 @@ public class UserServiceTest {
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
-        User actualUser = userService.updateUserById(user.getId(), "James Bond", "james@bond.net");
+        User actualUser = userService.updateUserById(user.getId(), "James Bond", "james@bond.net", "any", "1234");
         Assertions.assertNotNull(actualUser);
         Assertions.assertNotEquals("Daniel", actualUser.getName());
         verify(userRepository, times(1)).findById(user.getId());
@@ -77,7 +74,7 @@ public class UserServiceTest {
         when(userRepository.findById(noExistentUserId)).thenReturn(Optional.empty());
 
         UserNotFoundException thrownException = Assertions.assertThrows(UserNotFoundException.class, () ->{
-            userService.updateUserById(noExistentUserId, "James Bond", "james@bond.net");
+            userService.updateUserById(noExistentUserId, "James Bond", "james@bond.net", "007", "1234");
         });
 
         Assertions.assertEquals("No Found User", thrownException.getMessage());
@@ -128,9 +125,9 @@ public class UserServiceTest {
         UserNotFoundException thrownException = Assertions.assertThrows(UserNotFoundException.class, () ->{
             userService.deleteUserById(noExistentUserId);
         });
-        Assertions.assertEquals("No Found Task", thrownException.getMessage());
-        verify(taskRepository).findById(noExistentUserId);
-        verify(taskRepository, never()).deleteById(noExistentUserId);
+        Assertions.assertEquals("No Found User", thrownException.getMessage());
+        verify(userRepository).findById(noExistentUserId);
+        verify(userRepository, never()).deleteById(noExistentUserId);
     }
     @Test
     public void getTasksByUserIdTest() throws UserNotFoundException {
@@ -156,7 +153,7 @@ public class UserServiceTest {
             userService.getTasksByUserId(noExistentUserId);
         });
 
-        Assertions.assertEquals("No Found Task", thrownException.getMessage());
+        Assertions.assertEquals("No Found User", thrownException.getMessage());
         verify(taskRepository).findTodoTaskByUserId(noExistentUserId);
     }
 }
