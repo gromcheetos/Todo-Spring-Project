@@ -19,18 +19,23 @@ public class BasicSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/register", "/list-test", "/css/style.css", "/js/script.js").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .build();
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/users/login", "/users/register", "/list-test", "/css/style.css", "/js/script.js")
+                .permitAll()
+                .anyRequest().authenticated()
+            )
+            .logout((logout) -> logout
+                .logoutSuccessUrl("/home")
+                .permitAll()
+            )
+            .httpBasic(Customizer.withDefaults())
+            .build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+        throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

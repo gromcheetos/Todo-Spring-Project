@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Task Detail</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -7,6 +7,7 @@
     <script type="text/javascript" th:src="@{/js/script.js}"></script>
 </head>
 <body>
+<div sec:authorize="isAuthenticated()">Text visible only to authenticated users.</div>
 <div class="container">
     <div class="header">
         <h1>Task Detail</h1>
