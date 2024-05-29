@@ -67,13 +67,7 @@ public class TodoTaskService {
         }
         return tasks;
     }
-    /*
-    public Status getStatusFromUserStatus(String userStatus){
-        for (Status status : Status.values()) {
-            if (status.getUserStatus().equalsIgnoreCase(userStatus)) {
-                return status;
-            }
-        }
-        return null;
-    }*/
+   public long getCount(){
+        return taskRepository.count();
+   }
 }

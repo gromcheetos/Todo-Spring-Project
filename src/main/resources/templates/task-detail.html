@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task Detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Task Detail</h1>
+    </div>
+    <div class="task-detail">
+        <h2 th:text="${task.title}">Task Title</h2>
+        <div class="task-field">
+            <label for="description">Description:</label>
+            <p id="description" th:text="${task.description}">Task Description</p>
+        </div>
+        <div class="task-field">
+            <label for="priority">Priority:</label>
+            <p id="priority" th:text="${task.priority}">Task Priority</p>
+        </div>
+        <div class="task-field">
+            <label for="deadline">Deadline:</label>
+            <p id="deadline" th:text="${task.deadline}">Task Deadline</p>
+        </div>
+        <div class="task-field">
+            <label for="status">Status:</label>
+            <p id="status" th:text="${task.status}">Task Status</p>
+        </div>
+        <a th:href="@{/list-test}" class="back-button">Back to Tasks</a>
+    </div>
+</div>
+</body>
+</html>
