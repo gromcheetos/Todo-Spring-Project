@@ -25,6 +25,7 @@ public class BasicSecurityConfig {
                 .permitAll()
                 .anyRequest().authenticated()
             )
+            .logout((logout) -> logout.logoutUrl("/logout"))
             .logout((logout) -> logout
                 .logoutSuccessUrl("/home")
                 .permitAll()
