@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const isLoggedIn = () => {
-        return userData.username !== '';
+        const retrievedUserData = JSON.parse(localStorage.getItem('userData'));
+        return retrievedUserData.username !== '';
     };
 
     const replaceTodoList = () => {
@@ -166,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).then(data => {
             userData.username = username;
             userData.userId = data.userId;
+            localStorage.setItem('userData', JSON.stringify(userData));
             replaceTodoList();
             closeModal(loginModal);
             toggleAuthButtons();

@@ -15,8 +15,6 @@ public class ThymeleafTestController {
     @Autowired
     private TodoTaskService taskService;
 
-
-
     @RequestMapping("/list-test")
     public String getAllTasks(Model model) {
         model.addAttribute("listOfTasks", taskService.getAllTasks());
