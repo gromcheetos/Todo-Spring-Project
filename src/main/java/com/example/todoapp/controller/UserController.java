@@ -15,7 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/users")
 @RestController
@@ -36,10 +38,12 @@ public class UserController {
         @RequestParam("password") String password) {
         log.info("Request received to register the user");
         User newUser = new User(name, userEmail, username);
-        return ResponseEntity.ok(userService.createUser(newUser, password));
-    }
+        User createdUser = userService.createUser(newUser, password);
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("userId", createdUser.getId());
+        return ResponseEntity.ok(responseBody);    }
     @PostMapping("/login")
-    public ResponseEntity<String> basicLogin(@RequestParam("username") String username,
+    public ResponseEntity<Map<String, Object>>  basicLogin(@RequestParam("username") String username,
                                              @RequestParam("password") String password) {
         log.info("Request received for /users/login");
         Authentication authentication = authenticationManager.authenticate(
@@ -47,9 +51,13 @@ public class UserController {
         );
         log.info("Authentication " + authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info("User details: " + userDetails);
-        return ResponseEntity.ok("User " + userDetails.getUsername() + " logged in successfully");
+        User user = (User) authentication.getPrincipal();
+
+        log.info("User details: " + user);
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("userId", user.getId());
+        responseBody.put("message", "User " + user.getUsername() + " logged in successfully");
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/update")

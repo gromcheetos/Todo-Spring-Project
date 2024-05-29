@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Todo List</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Todo List</h1>
+    <button id="open-create-todo-modal-btn">Create New Task</button>
+    <button id="open-login-modal-btn" class="toggle-theme">Log in</button>
+    <button id="open-signup-modal-btn" class="toggle-theme">Sign up</button>
+    <button id="logout-btn" style="display: none;">Log out</button>
+  </div>
+  <div class="task-list" id="default-task-list">
+    <ul id="todo-list">
+      <li th:each="task, iterStat : ${listOfTasks}" class="task-item" th:if="${iterStat.index < 5}">
+        <input type="checkbox" />
+        <a th:href="@{/detail/{id}(id=${task.id})}" th:text="${task.title}"></a>
+      </li>
+      <li th:if="${listOfTasks.size() > 5}" id="more-link">
+        <a href="#" id="show-more-items" style="color: #63b3ed;">more lists...</a>
+      </li>
+      <li th:each="task, iterStat : ${listOfTasks}" class="task-item hidden-task" th:if="${iterStat.index >= 5}" style="display: none;">
+        <input type="checkbox" />
+        <a th:href="@{/detail/{id}(id=${task.id})}" th:text="${task.title}"></a>
+      </li>
+    </ul>
+  </div>
+  <div class="footer">
+    <div class="filters">
+      <button id="filter-todo">To Do</button>
+      <button id="filter-in-progress">In Progress</button>
+      <button id="filter-done">Done</button>
+      <button>Clear Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="add-task-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <form id="new-task-form">
+      <input type="text" name="title" placeholder="Title" required />
+      <input type="text" name="description" placeholder="Description" />
+      <select name="priority" required>
+        <option value="" disabled selected>Priority</option>
+        <option value="HIGH">HIGH</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="LOW">LOW</option>
+      </select>
+      <input type="date" name="deadline" placeholder="Deadline" required />
+      <select name="status" required>
+        <option value="" disabled selected>Status</option>
+        <option value="TO_DO">TO_DO</option>
+        <option value="IN_PROGRESS">IN_PROGRESS</option>
+        <option value="DONE">DONE</option>
+      </select>
+      <button type="submit">Add</button>
+    </form>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <form id="login-form">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+  </div>
+</div>
+
+<!-- Sign-Up Modal -->
+<div id="signup-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <form id="signup-form">
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="email" name="userEmail" placeholder="Email" required />
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+
+</body>
+</html>

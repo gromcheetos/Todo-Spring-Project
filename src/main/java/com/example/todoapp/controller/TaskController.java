@@ -33,7 +33,7 @@ public class TaskController {
     public ResponseEntity<TodoTask> createTask(@RequestParam("title") String title,
         @RequestParam("description") String description,
         @RequestParam("priority") String priority,
-        @RequestParam("deadline") LocalDate deadline,
+        @RequestParam("deadline") String deadline,
         @RequestParam("status") String status,
         @RequestParam("userId") int userId) throws UserNotFoundException {
         log.info("Received request with status: {} ", status);
@@ -41,9 +41,9 @@ public class TaskController {
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-       // LocalDate convertedDeadline = LocalDate.parse(deadline);
+        LocalDate convertedDeadline = LocalDate.parse(deadline);
         log.info("Before creating TodoTask");
-        TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), deadline,
+        TodoTask todoTask = new TodoTask(title, description, Priority.valueOf(priority), convertedDeadline,
             Status.valueOf(status));
         log.info("After creating TodoTask");
         todoTask.setUser(user);
@@ -62,7 +62,7 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/list") //endpoint
+    @GetMapping("/list")
     public ResponseEntity<List<TodoTask>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
