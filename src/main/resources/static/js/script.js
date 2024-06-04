@@ -1,15 +1,7 @@
-function showMoreItems() {
-  document.querySelectorAll('.hidden-task').forEach(function(item) {
-    item.style.display = 'flex';
-  });
-  document.getElementById('more-link').style.display = 'none';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const openCreateTodoModalBtn = document.getElementById('open-create-todo-modal-btn');
     const openLoginModalBtn = document.getElementById('open-login-modal-btn');
     const openSignupModalBtn = document.getElementById('open-signup-modal-btn');
-    const logoutBtn = document.getElementById('logout-btn');
     const todoListContainer = document.getElementById('default-task-list');
     const todoList = document.getElementById('todo-list');
     const newTaskForm = document.getElementById('new-task-form');
@@ -18,45 +10,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTaskModal = document.getElementById('add-task-modal');
     const loginModal = document.getElementById('login-modal');
     const signupModal = document.getElementById('signup-modal');
-    const showMoreItemsLink = document.getElementById('show-more-items');
     const clearSelectedButton = document.querySelector('button');
 
-     const handleTaskClick = (event) => {
-            const target = event.target;
-            if (target.tagName === 'INPUT') {
-                const taskId = target.closest('.task-item').dataset.id;
-                deleteTask(taskId);
-            }
-        };
-     const deleteTask = (taskId) => {
-         fetch(`/tasks/remove?id=${taskId}`, {
-             method: 'DELETE'
-         })
-         .then(response => {
-             if (response.ok) {
-                 const taskItem = document.querySelector(`.task-item[data-id="${taskId}"]`);
-                 if (taskItem) {
-                     taskItem.remove();
+     if (todoList) {
+             const handleTaskClick = (event) => {
+                 const target = event.target;
+                 if (target.tagName === 'INPUT') {
+                     const taskId = target.closest('.task-item').dataset.id;
+                     deleteTask(taskId);
                  }
-             } else {
-                 console.error('Error deleting task:', response.status);
-             }
-         })
-         .catch(error => {
-             console.error('Error deleting task:', error);
-         });
-     };
+             };
 
-       todoList.addEventListener('click', handleTaskClick);
+     const deleteTask = (taskId) => {
+                 fetch(`/tasks/remove?id=${taskId}`, {
+                     method: 'DELETE'
+                 })
+                 .then(response => {
+                     if (response.ok) {
+                         const taskItem = document.querySelector(`.task-item[data-id="${taskId}"]`);
+                         if (taskItem) {
+                             taskItem.remove();
+                         }
+                     } else {
+                         console.error('Error deleting task:', response.status);
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error deleting task:', error);
+                 });
+             };
 
-          // Event listener for "Clear Selected" button
-          clearSelectedButton.addEventListener('click', () => {
-              const selectedTasks = document.querySelectorAll('.task-item input:checked');
-              selectedTasks.forEach(task => {
-                  const taskId = task.closest('.task-item').dataset.id;
-                  deleteTask(taskId);
-              });
-          });
+             todoList.addEventListener('click', handleTaskClick);
+         } else {
+             console.warn('Element with id "todo-list" not found.');
+         }
+
+    if (clearSelectedButton) {
+        clearSelectedButton.addEventListener('click', () => {
+            const selectedTasks = document.querySelectorAll('.task-item input:checked');
+            selectedTasks.forEach(task => {
+                const taskId = task.closest('.task-item').dataset.id;
+                deleteTask(taskId);
+            });
+        });
+    } else {
+        console.warn('Clear selected button not found.');
+    }
 
     let userData = {
         username: '',
@@ -64,45 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
         todos: []
     };
 
-    const isLoggedIn = () => {
-        const retrievedUserData = JSON.parse(localStorage.getItem('userData'));
-        return retrievedUserData.username !== '';
+    const redirectToTaskList = () => {
+        window.location.href = '/list-test';
     };
 
     const replaceTodoList = () => {
-        todoList.innerHTML = '';
-        userData.todos.forEach(task => {
-            const li = document.createElement('li');
-            li.className = 'task-item';
-            li.innerHTML = `
-                <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''} />
-                <a href="/detail/${task.id}">${task.title}</a>
-            `;
-            todoList.appendChild(li);
-        });
-    };
-
-    const toggleAuthButtons = () => {
-        if (isLoggedIn()) {
-            openLoginModalBtn.style.display = 'none';
-            openSignupModalBtn.style.display = 'none';
-            logoutBtn.style.display = 'block';
+        if (todoList) {
+            todoList.innerHTML = '';
+            userData.todos.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''} />
+                    <a href="/detail/${task.id}">${task.title}</a>
+                `;
+                todoList.appendChild(li);
+            });
         } else {
-            openLoginModalBtn.style.display = 'block';
-            openSignupModalBtn.style.display = 'block';
-            logoutBtn.style.display = 'none';
+            console.warn('Element with id "todo-list" not found.');
         }
     };
 
-    const logout = () => {
-        userData = {
-            username: '',
-            userId: '',
-            todos: []
-        };
-        replaceTodoList();
-        toggleAuthButtons();
-    };
 
     const closeModal = (modal) => {
         modal.style.display = 'none';
@@ -138,9 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }).then(data => {
             userData.username = username;
             userData.userId = data.userId;
-            replaceTodoList();
-            closeModal(signupModal);
-            toggleAuthButtons();
+            localStorage.setItem('userData', JSON.stringify(userData));
+            redirectToTaskList();
         }).catch(error => {
             console.error('Error:', error);
             alert('Error: ' + error.message);
@@ -168,14 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
             userData.username = username;
             userData.userId = data.userId;
             localStorage.setItem('userData', JSON.stringify(userData));
-            replaceTodoList();
-            closeModal(loginModal);
-            toggleAuthButtons();
+            redirectToTaskList();
         }).catch(error => {
             console.error('Error:', error);
         });
     };
-
+    if(newTaskForm){
     newTaskForm.onsubmit = (e) => {
         e.preventDefault();
         if (!isLoggedIn()) {
@@ -224,48 +202,26 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error: ' + error.message);
         });
     };
+}
 
-    const fetchTasksByStatus = (status) => {
-        fetch(`/tasks/filter/status?status=${status}`)
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(tasks => {
-                userData.todos = tasks;
-                replaceTodoList();
-            })
-            .catch(error => {
-                console.error('Error fetching tasks by status:', error);
-                alert('Error: ' + error.message);
-            });
-    };
 
-    document.getElementById('filter-todo').addEventListener('click', () => {
-        fetchTasksByStatus('TO_DO');
-    });
-    document.getElementById('filter-in-progress').addEventListener('click', () => {
-        fetchTasksByStatus('IN_PROGRESS');
-    });
-    document.getElementById('filter-done').addEventListener('click', () => {
-        fetchTasksByStatus('DONE');
-    });
+    if (openCreateTodoModalBtn) {
+        openCreateTodoModalBtn.onclick = () => {
+            if (!isLoggedIn()) {
+                alert("Please log in to create a task.");
+                return;
+            }
+            openModal(addTaskModal);
+        };
+    }
+    if (openLoginModalBtn) {
+        openLoginModalBtn.onclick = () => openModal(loginModal);
+    }
 
-    openCreateTodoModalBtn.onclick = () => {
-        if (!isLoggedIn()) {
-            alert("Please log in to create a task.");
-            return;
-        }
-        openModal(addTaskModal);
-    };
-    openLoginModalBtn.onclick = () => openModal(loginModal);
-    openSignupModalBtn.onclick = () => openModal(signupModal);
+    if (openSignupModalBtn) {
+        openSignupModalBtn.onclick = () => openModal(signupModal);
+    }
 
-    showMoreItemsLink.onclick = showMoreItems;
-    logoutBtn.onclick = logout;
-    toggleAuthButtons();
 
     const handleTaskTitleClick = (event) => {
         const target = event.target;
@@ -282,7 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-    todoListContainer.addEventListener('click', handleTaskTitleClick);
+    if (todoListContainer) {
+        todoListContainer.addEventListener('click', handleTaskTitleClick);
+    } else {
+        console.warn('Element with id "default-task-list" not found.');
+    }
 
 });

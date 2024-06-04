@@ -15,6 +15,7 @@ body {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    text-align: center;
 }
 
 /* Header Styles */
@@ -22,7 +23,19 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    background: #1a202c;
+    padding: 10px 20px;
+    border-bottom: 2px solid #2d3748;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-center {
+    flex-grow: 1;
+    text-align: center;
 }
 
 .header h1 {
@@ -38,11 +51,13 @@ body {
     color: white;
     padding: 10px 15px;
     cursor: pointer;
+    margin: 0 5px;
 }
 
-.toggle-theme:hover, #open-modal-btn:hover, #open-create-todo-modal-btn:hover, #logout-btn {
+.toggle-theme:hover, #open-modal-btn:hover, #open-create-todo-modal-btn:hover, #logout-btn:hover {
     background: #4299e1;
 }
+
 
 /* Task List Styles */
 .task-list ul {
@@ -296,3 +311,4 @@ body {
 .back-button:hover {
     background: #4299e1;
 }
+

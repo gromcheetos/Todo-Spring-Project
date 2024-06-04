@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Todo List</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" th:src="@{/js/script.js}"></script>
+
+</head>
+<body>
+<div th:fragment="banner">
+  <div class="header">
+    <div class="header-left">
+      <button id="open-login-modal-btn" class="toggle-theme">Log in</button>
+      <button id="open-signup-modal-btn" class="toggle-theme">Sign up</button>
+    </div>
+    <div class="header-center">
+      <h1>Todo List</h1>
+    </div>
+    <div class="header-right">
+      <button id="logout-btn" style="display: none;">Log out</button>
+    </div>
+  </div>
+</div>
+<script>
+  const logoutBtn = document.getElementById('logout-btn');
+
+  const isLoggedIn = () => {
+      const retrievedUserData = JSON.parse(localStorage.getItem('userData'));
+      return retrievedUserData.username !== '';
+  };
+    const toggleAuthButtons = () => {
+      if (isLoggedIn()) {
+          if (openLoginModalBtn) openLoginModalBtn.style.display = 'none';
+          if (openSignupModalBtn) openSignupModalBtn.style.display = 'none';
+          if (logoutBtn) logoutBtn.style.display = 'block';
+      } else {
+          if (openLoginModalBtn) openLoginModalBtn.style.display = 'block';
+          if (openSignupModalBtn) openSignupModalBtn.style.display = 'block';
+          if (logoutBtn) logoutBtn.style.display = 'none';
+      }
+  };
+    const logout = () => {
+    userData = {
+        username: '',
+        userId: '',
+        todos: []
+    };
+    replaceTodoList();
+    toggleAuthButtons();
+};
+    if (logoutBtn) {
+    logoutBtn.onclick = logout;
+}
+
+  toggleAuthButtons();
+</script>
+</body>
+</html>

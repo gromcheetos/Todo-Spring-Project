@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -18,25 +20,28 @@ public class BasicSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/login", "/users/register", "/list-test", "/css/style.css", "/js/script.js")
-                .permitAll()
-                .anyRequest().authenticated()
-            )
-            .logout((logout) -> logout.logoutUrl("/logout"))
-            .logout((logout) -> logout
-                .logoutSuccessUrl("/home")
-                .permitAll()
-            )
-            .httpBasic(Customizer.withDefaults())
-            .build();
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/register", "/users/login", "/home", "/css/style.css",  "/js/**",  "/tasks/**")
+                        .permitAll()
+                        .requestMatchers("/list-test").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/users/logout")
+                        .logoutSuccessUrl("/home")
+                        .permitAll()
+                );
+
+        return httpSecurity.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
         throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 }

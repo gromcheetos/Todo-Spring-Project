@@ -41,7 +41,8 @@ public class UserController {
         User createdUser = userService.createUser(newUser, password);
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("userId", createdUser.getId());
-        return ResponseEntity.ok(responseBody);    }
+        return ResponseEntity.ok(responseBody);
+    }
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>>  basicLogin(@RequestParam("username") String username,
                                              @RequestParam("password") String password) {
