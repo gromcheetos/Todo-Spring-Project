@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Todo List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome!</h1>
+    <p>Pick up where you left off. To see your tasks for today, please log in or sign up.</p>
+    <div class="buttons">
+        <button id="open-login-modal-btn" class="toggle-theme">Log in</button>
+        <button id="open-signup-modal-btn" class="toggle-theme">Create free account</button>
+    </div>
+</div>
+<div th:replace="~{'fragments/modals.html' :: modals}"></div>
+
+</body>
+</html>
