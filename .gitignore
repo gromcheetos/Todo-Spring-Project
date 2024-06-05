@@ -19,6 +19,11 @@ target/
 *.iml
 *.ipr
 
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -33,3 +38,4 @@ build/
 .vscode/
 
 application.properties
+
