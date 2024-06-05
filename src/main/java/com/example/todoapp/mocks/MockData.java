@@ -29,8 +29,8 @@ public class MockData {
 
     @PostConstruct
     public void createMockData() {
-        User mockUser = new User("Lara Kroft", "lara@gmail.com","green yard");
-        testUser = userService.createUser(mockUser,"1234");
+        User mockUser = new User("Lara Kroft", "lara@gmail.com","lara");
+        testUser = userService.createUser(mockUser,"pass");
 
         for (int i = 0; i < 10; i++) {
             service.insertTask(createTask());

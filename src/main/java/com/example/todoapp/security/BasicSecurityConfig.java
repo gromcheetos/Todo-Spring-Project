@@ -21,18 +21,17 @@ public class BasicSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/register", "/users/login", "/home", "/css/style.css",  "/js/**",  "/tasks/**")
-                        .permitAll()
-                        .requestMatchers("/list-test").authenticated()
-                        .anyRequest().authenticated()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/users/logout")
-                        .logoutSuccessUrl("/home")
-                        .permitAll()
-                );
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/users/register", "/users/login", "/home", "/css/style.css", "/js/**", "/tasks/**")
+                .permitAll()
+                .anyRequest().authenticated()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/users/logout")
+                .logoutSuccessUrl("/home")
+                .permitAll()
+            );
 
         return httpSecurity.build();
     }

@@ -139,12 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({ username, password })
-        }).then(response => {
+
+        } ).then(response => {
             if (response.ok) {
                 return response.json();
+                alert("hello 1");
             }
             throw new Error('Network response was not ok.');
         }).then(data => {
+            alert("hello 2");
             userData.username = username;
             userData.userId = data.userId;
             localStorage.setItem('userData', JSON.stringify(userData));

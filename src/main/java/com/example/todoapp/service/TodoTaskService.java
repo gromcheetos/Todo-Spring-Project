@@ -1,8 +1,6 @@
 package com.example.todoapp.service;
 
-import com.example.todoapp.controller.TaskController;
 import com.example.todoapp.exceptions.TaskNotFoundException;
-import com.example.todoapp.exceptions.UserNotFoundException;
 import com.example.todoapp.model.enums.Priority;
 import com.example.todoapp.model.enums.Status;
 import com.example.todoapp.model.TodoTask;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class TodoTaskService {

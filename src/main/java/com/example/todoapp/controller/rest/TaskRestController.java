@@ -1,4 +1,4 @@
-package com.example.todoapp.controller;
+package com.example.todoapp.controller.rest;
 
 
 import com.example.todoapp.exceptions.TaskNotFoundException;
@@ -19,9 +19,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
-@RestController
+@org.springframework.web.bind.annotation.RestController
 @RequestMapping("/tasks")
-public class TaskController {
+public class TaskRestController {
 
     @Autowired
     private TodoTaskService taskService;
