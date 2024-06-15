@@ -20,7 +20,7 @@ public class TaskListController {
     @Autowired
     private TodoTaskService taskService;
 
-    @GetMapping("/list-test")
+    @GetMapping("/task/list")
     public String getAllTasks(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         log.info("Authentication: " + auth.toString());

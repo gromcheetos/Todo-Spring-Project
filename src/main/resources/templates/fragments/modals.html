@@ -20,6 +20,7 @@
     <div class="modal-content">
         <span class="close-btn">&times;</span>
         <form id="signup-form">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="text" name="name" placeholder="Name" required />
             <input type="email" name="userEmail" placeholder="Email" required />
             <input type="text" name="username" placeholder="Username" required />

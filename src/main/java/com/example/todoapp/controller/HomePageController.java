@@ -19,7 +19,7 @@ public class HomePageController {
             System.out.println("Authentication: " + auth);
             if (auth.isAuthenticated() && !(auth.getPrincipal() instanceof String && auth.getPrincipal().equals("anonymousUser"))) {
                 log.info("User is authenticated. Redirecting to /list-test");
-                return "redirect:/list-test";
+                return "redirect:/task/list";
             }
         } else {
             log.info("Authentication is null");

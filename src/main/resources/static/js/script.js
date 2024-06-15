@@ -1,15 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const openCreateTodoModalBtn = document.getElementById('open-create-todo-modal-btn');
-    const openLoginModalBtn = document.getElementById('open-login-modal-btn');
-    const openSignupModalBtn = document.getElementById('open-signup-modal-btn');
     const todoListContainer = document.getElementById('default-task-list');
     const todoList = document.getElementById('todo-list');
     const newTaskForm = document.getElementById('new-task-form');
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
     const addTaskModal = document.getElementById('add-task-modal');
-    const loginModal = document.getElementById('login-modal');
-    const signupModal = document.getElementById('signup-modal');
     const clearSelectedButton = document.querySelector('button');
 
      if (todoList) {
@@ -63,9 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         todos: []
     };
 
-    const redirectToTaskList = () => {
-        window.location.href = '/list-test';
-    };
 
     const replaceTodoList = () => {
         if (todoList) {
@@ -97,65 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = () => closeModal(btn.closest('.modal'));
     });
 
-    signupForm.onsubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(signupForm);
-        const name = formData.get('name');
-        const userEmail = formData.get('userEmail');
-        const username = formData.get('username');
-        const password = formData.get('password');
 
-        fetch('/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({ name, userEmail, username, password })
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Network response was not ok.');
-        }).then(data => {
-            userData.username = username;
-            userData.userId = data.userId;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            redirectToTaskList();
-        }).catch(error => {
-            console.error('Error:', error);
-            alert('Error: ' + error.message);
-        });
-    };
 
-    loginForm.onsubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(loginForm);
-        const username = formData.get('username');
-        const password = formData.get('password');
-
-        fetch('/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({ username, password })
-
-        } ).then(response => {
-            if (response.ok) {
-                return response.json();
-                alert("hello 1");
-            }
-            throw new Error('Network response was not ok.');
-        }).then(data => {
-            alert("hello 2");
-            userData.username = username;
-            userData.userId = data.userId;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            redirectToTaskList();
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    };
     if(newTaskForm){
     newTaskForm.onsubmit = (e) => {
         e.preventDefault();
@@ -217,9 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(addTaskModal);
         };
     }
-    if (openLoginModalBtn) {
-        openLoginModalBtn.onclick = () => openModal(loginModal);
-    }
+
 
     if (openSignupModalBtn) {
         openSignupModalBtn.onclick = () => openModal(signupModal);
